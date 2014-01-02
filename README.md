@@ -15,6 +15,7 @@ Standard decks of playing cards contain 52 cards. In order to play a game, one o
 Ideally, we would like the cards to be randomly shuffled, independently of where they started. So even if a card (say the Ace of Spades) is on top of the deck when you start, it is equally likely to be in any of the 52 possible positions at the end of the shuffle. In other words, we want the positions of the cards in the deck to be uniformly randomly distributed by the shuffle.
 
 OpenFrameworks
+--------------
 
 This project uses openFrameworks to help visualize the results. You should expect that it will take you several days to get openFrameworks installed and working!
 
