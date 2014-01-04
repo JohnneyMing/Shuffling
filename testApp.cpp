@@ -139,33 +139,34 @@ void testApp::doRandExperiment(){
     }
 }
 
+
+//"Riffle shuffle" style.
+//Author: MINGWEI ZHONG
 void shuffle(unsigned int cards[], unsigned int len){
+    
+    //When you start doing riffle shuffle, first of all, you need to cut the whole deck of cards into approximately half.
+    //Here I create two linked-list to hold these two decks of cards.
+      LinkedList<int>deck1;  
+      LinkedList<int>deck2;
 
-      LinkedList<int>deck1;  //To hold one deck of cards.
-      LinkedList<int>deck2;  //To hold another deck of cards.
 
-      LinkedList<int>split1; //To hold the amount of cards each time you riffle a deck of cards.
-                             //My simulation is to simulate the dealer is good at shuffling cards, so each time the dealer is going
-                             //to take 1 or 2 card and insert into another deck of cards.
-      LinkedList<int>split2; //Only 1 card is the best condition.
-
-      LinkedList<int>tmp;    //Useful linkedlist.
+      //Useful temporary linked-list.
+      LinkedList<int>tmp;
+      
+      //Set the value of temporary linked-list to be 100.
       for(int i = 0;i<len;i++)
       {
           tmp.add(i,100);
       }
 
       int k = 0;
-
       int j = 0;
-
       int p = 0;
 
-      int cutPoint = rand()%5 + 24; //Generate a cutPoint when you start to cut a whole deck of cards.
-
-      int sumnum1 = 0;
-
-      int sumnum2 = 0;
+      
+      //Generate a cutpoint from 22 to 29, I think it is a reasonable number.
+      //My simulation is to simulate a person is good at shuffling.
+      int cutPoint = rand() % 8 + 22;
 
       for(int i = 0;i<cutPoint;i++)
       {
@@ -178,66 +179,27 @@ void shuffle(unsigned int cards[], unsigned int len){
           k++;
       }
 
-      while(sumnum1 < (int)deck1.size())
-      {
-          //My simulation is to simulate the dealer is good at shuffling cards, so each time the dealer is going
-         //to take 1 or 2 card and insert into another deck of cards.
-          int num1 = rand()%2 + 1;
-          split1.add(j,num1);
-          j++;
-          sumnum1 = sumnum1 + num1;
-      }
-      if(sumnum1 > (int)deck1.size())
-      {
-          sumnum1 - deck1.get((int)split1.size()-1);
-
-          split1.remove((int)split1.size()-1);
-
-          int rnd = 0;
-
-          while(sumnum1 + rnd != (int)deck1.size())
-          {
-             rnd = rand()%2 + 1;
-          }
-           split1.add((int)split1.size(),rnd);
-      }
-
-
-      while(sumnum2 < (int)deck2.size())
-      {
-          int num2 = rand()%2 + 1;
-          split2.add(p,num2);
-          p++;
-          sumnum2 = sumnum2 + num2;
-      }
-      if(sumnum2 > (int)deck2.size())
-      {
-          sumnum2 - deck2.get(split2.size()-1);
-
-          split2.remove(split2.size()-1);
-
-          int rnd = 0;
-
-          while(sumnum2 + rnd != (int)deck2.size())
-          {
-             rnd = rand()%2 + 1;
-          }
-           split2.add(split2.size(),rnd);
-      }
-
-      //Generate a random number to decided which deck leads first.
-      int leader = rand()%2;
       int index = 0;
 
-      //deck1 leads.
-      if(leader == 0)
+      if((int)deck1.size() <= (int)deck2.size())
       {
           while(deck1.size() !=0)
           {
-              for(int i = 0;i<(int)split1.size();i++)
+              for(int i = 0;i<(int)deck1.size();i++)
               {
-                for(int j = 0;j<split1.get(i);j++)
-                  {
+                      //Here is the important part, in order to simulate
+                      //a real shuffling process, the cards locate at top, middle, and bottom 
+                      //location have high probability to be inserted into top, middle, and bottom
+                      //location after shuffling.
+                      
+                      //Which means, the cards locate at top position will never be inserted to the
+                      //bottom location if you are doing real shuffling.
+                      //That's why I increase the "index" value as 2 so the cards locat at different 
+                      //positions can be reasonably distributed into a new position.
+                      
+                      //Overall, I am simulating a dealer picks 1 or 2 cards from one of these
+                      //two decks of cards and insert them to reasonable positions which the cards ought to be.
+                
                        int rndIndex = rand()% 2 + (index);
 
                        tmp.set(rndIndex,deck1.get(0));
@@ -245,58 +207,57 @@ void shuffle(unsigned int cards[], unsigned int len){
                        deck1.remove(0);
 
                        index = index + 2;
-                  }
               }
           }
 
-           //Insert the cards from deck2 to the rest of slots.
-           for(int i = 0;i<52;i++)
+           for(int i = 0;i<len;i++)
            {
-           if(tmp.get(i) == 100)
-           {
-              tmp.set(i,deck2.get(0));
-
-              deck2.remove(0);
-           }
-         }
+               //Insert the cards from another deck of cards
+               //into the rest of positions.
+               if(tmp.get(i) == 100)
+               {
+                 tmp.set(i,deck2.get(0));
+                 deck2.remove(0);
+               }
+          }
+          for(int i = 0;i<(int)tmp.size();i++)
+          {
+              //Update the "cards" after shuffling.
+              cards[i] = tmp.get(i);
+          }
       }
 
-      //deck2 leads.
+      //If the size of deck2 is larger than deck1.
       else
       {
           while(deck2.size() !=0)
           {
-              for(int i = 0;i<(int)split2.size();i++)
+              for(int i = 0;i<(int)deck2.size();i++)
               {
-                for(int j = 0;j<split2.get(i);j++)
-                  {
                        int rndIndex = rand()% 2 + (index);
 
                        tmp.set(rndIndex,deck2.get(0));
+
                        deck2.remove(0);
 
                        index = index + 2;
-                  }
               }
-          }
+           }
 
-           //Insert the cards from deck1 to the rest of slots.
-           for(int i = 0;i<52;i++)
+           for(int i = 0;i<len;i++)
            {
-            if(tmp.get(i) == 100)
-            {
-              tmp.set(i,deck1.get(0));
-              deck1.remove(0);
-            }
-         }
+             if(tmp.get(i) == 100)
+                {
+                  tmp.set(i,deck1.get(0));
+                  deck1.remove(0);
+                }
+           }
+           for(int i = 0;i<(int)tmp.size();i++)
+           {
+                 cards[i] = tmp.get(i);
+           }
       }
-
-      //Add the cards from linked-list tmp back to "cards".
-      for(int i = 0;i<len;i++)
-      {
-          cards[i] = tmp.get(i);
-      }
-   //finished shuffle.
+  //Finished shuffling.
 }
 
 void testApp::doShuffleExperiment(int numShuffles){
