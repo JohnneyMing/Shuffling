@@ -10,9 +10,12 @@
 //LinkedList<T> class.
 
 
+//Author:MINGWEI ZHONG
+
+
 /*
 
-I IMPLEMENTED THIS LAB BY USING DOUBLE LINKEDLIST AFTER READING Open Data Structures (in C++)
+Reference:Open Data Structures (in C++)
 Edition 0.1F FF
 Pat Morin
 
